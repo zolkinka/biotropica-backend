@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
-import { Request } from 'src/auth/auth.header';
+import { AuthHeader, Request } from 'src/auth/auth.header';
 
 const ERROR_MESSAGE: string = 'User unauthorized';
 
@@ -18,7 +18,6 @@ export class JwtAuthGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
-
     try {
       return this.validateRequest(request);
     } catch (e) {
@@ -27,7 +26,8 @@ export class JwtAuthGuard implements CanActivate {
   }
 
   validateRequest(request: Request): boolean {
-    const token = request.cookies.Bearer;
+    const authHeader = new AuthHeader(request);
+    const token = authHeader.getValidToken();
 
     if (!token) {
       throw new UnauthorizedException({ message: ERROR_MESSAGE });

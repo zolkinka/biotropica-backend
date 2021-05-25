@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'src/auth/auth.header';
+import { AuthHeader, Request } from 'src/auth/auth.header';
 import { CreateRoleDto } from 'src/roles/dto/create-role.dto';
 import { ROLES_KEY } from './roles.decorator';
 
@@ -28,7 +28,8 @@ export class RolesGuard implements CanActivate {
       }
 
       const request: Request = context.switchToHttp().getRequest();
-      const token = request.cookies.Bearer;
+      const authHeader = new AuthHeader(request);
+      const token = authHeader.getValidToken();
 
       if (!token) {
         throw new HttpException(ERROR_MESSAGE, HttpStatus.FORBIDDEN);

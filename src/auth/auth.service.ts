@@ -7,7 +7,6 @@ import { User } from 'src/users/users.model';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 import * as bcrypt from 'bcryptjs';
-import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -16,14 +15,12 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signin(dto: CreateUserDto, response: Response) {
+  async signin(dto: CreateUserDto) {
     const user = await this.validateUser(dto);
-    const token = await this.generateToken(user);
-    this.setBearerTokenInResponseCookie(token, response);
-    return user;
+    return await this.generateToken(user);
   }
 
-  async signup(dto: CreateUserDto, response: Response) {
+  async signup(dto: CreateUserDto) {
     const candidate = await this.usersService.getUserByEmail(dto.email);
 
     if (candidate) {
@@ -40,9 +37,7 @@ export class AuthService {
       password: hashPassword,
     });
 
-    const token = await this.generateToken(user);
-    this.setBearerTokenInResponseCookie(token, response);
-    return user;
+    return await this.generateToken(user);
   }
 
   private async generateToken(user: User) {
@@ -51,7 +46,10 @@ export class AuthService {
       password: user.password,
       roles: user.roles,
     };
-    return this.jwtService.sign(payload);
+
+    return {
+      token: this.jwtService.sign(payload),
+    };
   }
 
   private async validateUser(dto: CreateUserDto) {
@@ -66,12 +64,5 @@ export class AuthService {
       'Incorrect email or password',
       HttpStatus.BAD_REQUEST,
     );
-  }
-
-  private setBearerTokenInResponseCookie(token: string, response: Response) {
-    response.cookie('Bearer', token, {
-      httpOnly: true,
-      expires: new Date(new Date().setMilliseconds(1 * 60 * 1000)),
-    });
   }
 }

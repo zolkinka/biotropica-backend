@@ -1,6 +1,5 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { AuthService } from './auth.service';
 
@@ -12,18 +11,12 @@ export class AuthController {
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({ status: 200, type: 'Token!' })
   @Post('/signin')
-  signin(
-    @Body() dto: CreateUserDto,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    return this.authService.signin(dto, response);
+  signin(@Body() dto: CreateUserDto) {
+    return this.authService.signin(dto);
   }
 
   @Post('/signup')
-  signup(
-    @Body() dto: CreateUserDto,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    return this.authService.signup(dto, response);
+  signup(@Body() dto: CreateUserDto) {
+    return this.authService.signup(dto);
   }
 }
