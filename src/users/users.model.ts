@@ -139,6 +139,24 @@ export class User extends Model<User, UserCreationsAttrs> {
   })
   banReason: string;
 
+  @ApiProperty({
+    example: true,
+    description: 'Has the user confirmed his email?',
+  })
+  @Column({
+    type: DataType.BOOLEAN,
+  })
+  confirmed: boolean;
+
+  @ApiProperty({
+    example: '1234fsadf345fbsdfg',
+    description: 'Confirmation hash email',
+  })
+  @Column({
+    type: DataType.STRING,
+  })
+  confirmed_hash: string;
+
   @BelongsToMany(() => Role, () => UserRoles)
   roles: Role[];
 }

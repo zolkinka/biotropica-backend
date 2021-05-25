@@ -38,6 +38,22 @@ export class UsersService {
     return user;
   }
 
+  async getUserByConfirmedHash(confirmedHash: string) {
+    const user = await this.userRepository.findOne({
+      where: { confirmed_hash: confirmedHash },
+      include: { all: true },
+      attributes: {
+        exclude: ['password'],
+      },
+    });
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    return user;
+  }
+
   async addRoleByPk(dto: AddRoleDto) {
     const user = await this.userRepository.findByPk(dto.userId, {
       include: { all: true },
