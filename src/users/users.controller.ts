@@ -28,6 +28,8 @@ export class UsersController {
   @ApiBody({ type: CreateUserDto })
   @ApiOperation({ summary: 'Create user (Available only to the admin)' })
   @ApiResponse({ status: 201, type: User })
+  @Roles(RoleType.ADMIN)
+  @UseGuards(RolesGuard)
   @Post()
   create(@Body() dto: CreateUserDto) {
     return this.usersService.createUser(dto);

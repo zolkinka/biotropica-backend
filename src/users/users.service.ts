@@ -38,6 +38,11 @@ export class UsersService {
     return user;
   }
 
+  async updateUser(userId: number, fields: any) {
+    const user = await this.userRepository.findByPk(userId);
+    await user.update(fields);
+  }
+
   async getUserByConfirmedHash(confirmedHash: string) {
     const user = await this.userRepository.findOne({
       where: { confirmed_hash: confirmedHash },

@@ -6,7 +6,7 @@ export class VerifyEmailDto {
   @ApiProperty({
     example:
       'Почта успешно подтверждена, теперь вы можете купить тарифный план',
-    description: 'Is the user verified',
+    description: 'Message success',
   })
   message: string;
 }
